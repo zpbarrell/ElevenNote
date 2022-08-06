@@ -47,7 +47,7 @@ namespace ElevenNote.WebAPI.Controllers
                 : NotFound();
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateNoteById([FromBady] NoteUpdate request)
+        public async Task<IActionResult> UpdateNoteById([FromBody] NoteUpdate request)
         {
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -55,6 +55,13 @@ namespace ElevenNote.WebAPI.Controllers
             return await _noteService.UpdateNoteAsync(request)
                 ? Ok("Note Updated Successfully.")
                 : BadRequest("Note could not be updated.");
+        }
+        [HttpDelete("noteId:int")]
+        public async Task<IActionResult> DeleteNote([FromRoute] int noteId)
+        {
+            return await _noteService.DeleteNoteAsync(noteId)
+                ? Ok($"Note {noteId} was deleted.")
+                : BadRequest($"Note {noteId} could not be deleted.");
         }
     }
 }
