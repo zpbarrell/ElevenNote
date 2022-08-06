@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ElevenNote.Models.Note;
 using ElevenNote.Services.Note;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -36,6 +37,24 @@ namespace ElevenNote.WebAPI.Controllers
         {
             var notes = await _noteService.GetAllNotesAsync();
             return Ok(notes);
+        }
+        [HttpGet("{noteId:int}")]
+        public async Task<IActionResult> GetNoteById([FromRoute] int noteId)
+        {
+            var detail = await _noteService.GetNoteByIdAsync(noteId);
+            return detail is not null
+                ? Ok(detail)
+                : NotFound();
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateNoteById([FromBady] NoteUpdate request)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            return await _noteService.UpdateNoteAsync(request)
+                ? Ok("Note Updated Successfully.")
+                : BadRequest("Note could not be updated.");
         }
     }
 }
